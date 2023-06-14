@@ -108,8 +108,7 @@ public class PersonDAO {
     }
 
     public void delete(int id) {
-        PreparedStatement preparedStatement =
-                null;
+        PreparedStatement preparedStatement = null;
         try {
             preparedStatement = connection.prepareStatement("DELETE FROM Person WHERE id=?");
             preparedStatement.setInt(1, id);
