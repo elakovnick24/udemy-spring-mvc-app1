@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PersonDAO {
@@ -26,6 +27,11 @@ public class PersonDAO {
         return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
     }
 
+    public Optional<Person> show(String email) {
+        return jdbcTemplate.query("SELECT * FROM  Person WHERE email=?", new Object[]{email},
+        new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+    }
+
     public Person show(int id) {
         return jdbcTemplate.query("SELECT * FROM Person WHERE id=?",
                         new Object[]{id},
@@ -34,17 +40,18 @@ public class PersonDAO {
     }
 
     public void save(Person person) {
-        jdbcTemplate.update("INSERT INTO Person VALUES (1, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO Person(name, age, email, address) VALUES (1, ?, ?, ?)",
                 person.getName(),
                 person.getAge(),
                 person.getEmail());
     }
 
     public void update(int id, Person updatedPerson) {
-        jdbcTemplate.update("UPDATE Person SET name=?, age=?, email=? WHERE id=?",
+        jdbcTemplate.update("UPDATE Person SET name=?, age=?, email=?, address=? WHERE id=?",
                 updatedPerson.getName(),
                 updatedPerson.getAge(),
                 updatedPerson.getEmail(),
+                updatedPerson.getAddress(),
                 id);
     }
 
@@ -99,7 +106,7 @@ public class PersonDAO {
         List<Person> people = new ArrayList<>();
 
         for (int i = 0; i < 1000; i++) {
-            people.add(new Person(i, "Name " + i, 30 + i, "test_" + i + "@email.com"));
+            people.add(new Person(i, "Name " + i, 30 + i, "test_" + i + "@email.com", "Some address"));
         }
         
         return people;
